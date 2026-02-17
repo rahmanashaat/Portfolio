@@ -882,6 +882,9 @@
             .nav-container {
                 display: none;
             }
+            .menu-toggle {
+                display: block !important;
+            }
             .mobile-name-dropdown {
                 width: 100%;
                 right: 0;
@@ -949,17 +952,15 @@
                 font-size: 1.5rem;
             }
         }
-
-        .menu-toggle {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
     <!-- Video Background -->
     <div class="video-background">
         <video autoplay muted loop playsinline id="bgVideo">
+            <!-- Update this path to your actual video file location -->
             <source src="PixVerse_V5.6_Image_Text_360P_A_slow_cinematic.mp4" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
         <div class="video-overlay"></div>
     </div>
@@ -1028,6 +1029,7 @@
                     <div class="about-grid">
                         <div class="about-image">
                             <div class="image-wrapper">
+                                <!-- Update this path to your actual image -->
                                 <img src="Snapchat-617375957.jpg" alt="Rahma Nashaat" onerror="this.style.display='none'; this.parentElement.innerHTML += '<span style=&quot;font-size: 4rem; color: var(--gothic-gold);&quot;>👤</span>';">
                             </div>
                         </div>
@@ -1137,6 +1139,7 @@
                 educational background, technical skills, and notable achievements.
             </p>
             <div class="modal-buttons">
+                <!-- Update these paths to your actual CV files -->
                 <a href="Rahma New CV.pdf" download="Rahma_Nashaat_CV.pdf" class="btn">
                      Download PDF
                 </a>
@@ -1172,7 +1175,7 @@
             { img: "Course_Certificate_En1_page-0001.jpg", title: "SwiftUI Development", issuer: "Mahara-tech", emoji: "📱" }
         ];
 
-        // WORK ITEMS - with media array for multiple images/videos per project - CORRECTED VERSION
+        // WORK ITEMS - with media array for multiple images/videos per project
         const workItems = [
             { 
                 emoji: "📢",
@@ -1197,9 +1200,8 @@
                 media: [
                     { type: "image", src: "New folder/Artisticbook-0.jpeg", text: "Front book" },
                     { type: "image", src: "New folder/Artisticbook-1.jpeg", text: "Back book" },
-                    
                 ],
-                year: "2026"
+                year: "2025"
             },
             { 
                 emoji: "🏜️",
@@ -1230,7 +1232,6 @@
                     { type: "image", src: "New folder/P1030874.JPG", text: "Product shot." },
                     { type: "image", src: "New folder/P1030878.JPG", text: "Product shot." },
                     { type: "image", src: "New folder/P10002501 (1).JPG", text: "Product shot." },
-                    
                 ],
                 year: "2024-2026"
             },
@@ -1244,7 +1245,6 @@
                     { type: "video", src: "New folder/Zamalek (1)mp4.mp4", text: "POV: IT'S ZAMALEK" },
                     { type: "video", src: "New folder/Stop motion (1).mp4", text: "Stop motion about M&M" },
                     { type: "video", src: "New folder/Final project (1).mp4", text: "POV: IT'S EGYPT" },
-                    
                 ],
                 year: "2025-2026"
             },
@@ -1336,6 +1336,12 @@
         // Current viewer state
         let currentWorkIndex = 0;
         let currentMediaIndex = 0;
+
+        // Toggle mobile menu
+        function toggleMenu() {
+            const dropdown = document.getElementById('nameDropdown');
+            dropdown.classList.toggle('active');
+        }
 
         // Initialize certificates
         function initCertificates() {
@@ -1491,17 +1497,6 @@
             }
         }
 
-        // Navigate between projects (optional - can be used with keyboard or additional buttons)
-        function navigateProject(direction) {
-            const newIndex = currentWorkIndex + direction;
-            
-            if (newIndex >= 0 && newIndex < workItems.length) {
-                currentWorkIndex = newIndex;
-                currentMediaIndex = 0;
-                updateWorkViewer();
-            }
-        }
-
         // Close viewer
         function closeWorkViewer() {
             document.getElementById('workViewerModal').style.display = 'none';
@@ -1594,7 +1589,8 @@
             const video = document.getElementById('bgVideo');
             if (video) {
                 video.play().catch(() => {
-                    console.log('Video autoplay prevented');
+                    console.log('Video autoplay prevented - adding fallback');
+                    // Optional: Add a play button or handle autoplay failure
                 });
             }
             
