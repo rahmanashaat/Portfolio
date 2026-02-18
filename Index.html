@@ -493,7 +493,56 @@
             font-weight: 300;
         }
 
-        /* WORK Grid - 9 Specific Categories */
+        /* --- WORK Section: Category Scroller (Mobile) & Grid --- */
+        /* Category scroller - only visible on mobile */
+        .category-scroller {
+            display: none;
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 30px;
+            padding: 10px 0 15px 0;
+            gap: 8px;
+            scrollbar-width: none; /* Firefox */
+            border-bottom: 1px solid rgba(200,169,126,0.2);
+            border-top: 1px solid rgba(200,169,126,0.2);
+            background: rgba(10,10,10,0.3);
+            backdrop-filter: blur(4px);
+            z-index: 5;
+        }
+        .category-scroller::-webkit-scrollbar {
+            display: none;
+        }
+        .category-chip {
+            display: inline-block;
+            padding: 8px 18px;
+            margin: 0 5px;
+            font-family: 'Cardo', serif;
+            font-size: 0.95rem;
+            color: var(--gothic-light);
+            background: rgba(26,26,26,0.7);
+            border: 1px solid rgba(200,169,126,0.3);
+            border-radius: 40px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-transform: lowercase;
+        }
+        .category-chip.active-chip {
+            background: var(--gothic-gold-dark);
+            color: var(--gothic-dark);
+            border-color: var(--gothic-gold);
+            font-weight: 600;
+        }
+        .category-chip:first-child {
+            margin-left: 15px;
+        }
+        .category-chip:last-child {
+            margin-right: 15px;
+        }
+
+        /* Work Grid */
         .work-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -603,7 +652,7 @@
             font-size: 1.2rem;
         }
 
-        /* Category filter hint */
+        /* Category filter hint (desktop) */
         .work-category-note {
             text-align: center;
             margin-bottom: 40px;
@@ -919,6 +968,14 @@
             .viewer-media {
                 min-height: 250px;
             }
+            /* Show category scroller only on mobile */
+            .category-scroller {
+                display: flex;
+            }
+            /* Hide desktop note on mobile */
+            .work-category-note {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1095,9 +1152,13 @@
             <section class="slide" id="work">
                 <div class="slide-container">
                     <h2 class="section-title">Work</h2>
+                    <!-- Desktop hint (hidden on mobile) -->
                     <div class="work-category-note">
                         <span>✦ campaign · artistic book · photography · videos · digital art · storyboard · UI/UX · posters · cover book ✦</span>
                     </div>
+                    <!-- Mobile Category Scroller (visible only on mobile) -->
+                    <div class="category-scroller" id="categoryScroller"></div>
+                    
                     <div class="work-grid" id="workGrid"></div>
                 </div>
             </section>
@@ -1337,6 +1398,7 @@
         // Current viewer state
         let currentWorkIndex = 0;
         let currentMediaIndex = 0;
+        let activeCategory = 'all'; // for mobile filter
 
         // Toggle mobile menu
         function toggleMenu() {
@@ -1387,16 +1449,59 @@
             });
         }
 
-        // Initialize work grid
-        function initWorkGrid() {
+        // Initialize category scroller and set up filter
+        function initCategoryScroller() {
+            const scroller = document.getElementById('categoryScroller');
+            if (!scroller) return;
+            
+            // Get unique categories from workItems
+            const categories = ['all', ...new Set(workItems.map(item => item.category))];
+            
+            scroller.innerHTML = categories.map(cat => 
+                `<span class="category-chip ${cat === 'all' ? 'active-chip' : ''}" data-category="${cat}">${cat}</span>`
+            ).join('');
+            
+            // Add click handlers to chips
+            document.querySelectorAll('.category-chip').forEach(chip => {
+                chip.addEventListener('click', function(e) {
+                    const cat = this.dataset.category;
+                    activeCategory = cat;
+                    
+                    // Update active class
+                    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active-chip'));
+                    this.classList.add('active-chip');
+                    
+                    // Filter grid
+                    filterWorkGrid(cat);
+                });
+            });
+        }
+
+        // Filter work grid based on category
+        function filterWorkGrid(category) {
             const grid = document.getElementById('workGrid');
             if (!grid) return;
             
+            const filteredItems = category === 'all' 
+                ? workItems 
+                : workItems.filter(item => item.category === category);
+            
+            renderWorkItems(filteredItems);
+        }
+
+        // Render work items (used by filter)
+        function renderWorkItems(itemsArray) {
+            const grid = document.getElementById('workGrid');
             grid.innerHTML = '';
-            workItems.forEach((item, index) => {
+            
+            itemsArray.forEach((item, idx) => {
+                // Find original index for viewer (needs original index for openWorkViewer)
+                const originalIndex = workItems.findIndex(w => 
+                    w.category === item.category && w.title === item.title && w.year === item.year);
+                
                 const card = document.createElement('div');
                 card.className = 'work-card';
-                card.setAttribute('onclick', `openWorkViewer(${index})`);
+                card.setAttribute('onclick', `openWorkViewer(${originalIndex})`);
                 
                 const img = document.createElement('img');
                 img.className = 'work-image';
@@ -1437,6 +1542,12 @@
                 card.appendChild(content);
                 grid.appendChild(card);
             });
+        }
+
+        // Initialize work grid (full)
+        function initWorkGrid() {
+            renderWorkItems(workItems);
+            initCategoryScroller(); // also sets up filter
         }
 
         // Open work viewer
@@ -1585,7 +1696,7 @@
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
             initCertificates();
-            initWorkGrid();
+            initWorkGrid(); // this now also inits scroller and renders full grid
             
             const video = document.getElementById('bgVideo');
             if (video) {
