@@ -671,6 +671,36 @@
             font-weight: 400;
         }
 
+        /* ===== NEW: Mobile filter bar with arrows ===== */
+        .mobile-filter-bar {
+            display: none;  /* hidden on desktop, flex on mobile */
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+            margin: 20px 0 25px;
+            background: rgba(10,10,10,0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200,169,126,0.2);
+            border-radius: 60px;
+            padding: 8px 10px;
+        }
+        .filter-arrow {
+            background: rgba(26,26,26,0.9);
+            border: 1px solid var(--gothic-gold);
+            color: var(--gothic-gold);
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .filter-arrow:active { background: var(--gothic-gold-dark); color: #0a0a0a; }
+        .filter-arrow.disabled { opacity: 0.2; pointer-events: none; border-color: #444; }
+
         /* Contact Section */
         .contact-grid {
             display: grid;
@@ -985,8 +1015,12 @@
             .viewer-media video {
                 max-height: 50vh;
             }
-            /* Show category scroller only on mobile */
+            /* Show category scroller only on mobile (old one) - we'll keep but new bar replaces it? We'll hide old and show new */
             .category-scroller {
+                display: none; /* hide old scroller */
+            }
+            /* Show new filter bar */
+            .mobile-filter-bar {
                 display: flex;
             }
             /* Hide desktop note on mobile */
@@ -1193,8 +1227,13 @@
                     <div class="work-category-note">
                         <span>✦ campaign · artistic book · photography · videos · digital art · storyboard · UI/UX · posters · cover book ✦</span>
                     </div>
-                    <!-- Mobile Category Scroller (visible only on mobile) -->
-                    <div class="category-scroller" id="categoryScroller"></div>
+                    
+                    <!-- NEW Mobile Filter Bar with two arrows + scroller (visible only on mobile) -->
+                    <div class="mobile-filter-bar" id="mobileFilterBar">
+                        <span class="filter-arrow left" id="filterArrowLeft">←</span>
+                        <div class="category-scroller" id="categoryScroller"></div>
+                        <span class="filter-arrow right" id="filterArrowRight">→</span>
+                    </div>
                     
                     <div class="work-grid" id="workGrid"></div>
                 </div>
@@ -1746,10 +1785,31 @@
             }
         });
 
+        // Setup arrow scrolling for mobile filter bar
+        function setupMobileArrows() {
+            const leftArrow = document.getElementById('filterArrowLeft');
+            const rightArrow = document.getElementById('filterArrowRight');
+            const scroller = document.getElementById('categoryScroller');
+            if (!leftArrow || !rightArrow || !scroller) return;
+            
+            const scrollAmount = 200;
+            leftArrow.addEventListener('click', () => { scroller.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); });
+            rightArrow.addEventListener('click', () => { scroller.scrollBy({ left: scrollAmount, behavior: 'smooth' }); });
+            
+            function updateArrows() {
+                const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+                leftArrow.classList.toggle('disabled', scroller.scrollLeft <= 5);
+                rightArrow.classList.toggle('disabled', scroller.scrollLeft >= maxScroll - 5);
+            }
+            scroller.addEventListener('scroll', updateArrows);
+            setTimeout(updateArrows, 100);
+        }
+
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
             initCertificates();
             initWorkGrid(); // this now also inits scroller and renders full grid
+            setupMobileArrows(); // activate arrow clicks and disable states
             
             const video = document.getElementById('bgVideo');
             if (video) {
@@ -1775,6 +1835,8 @@
                     logoLink.removeEventListener('click', toggleNameDropdown);
                     document.getElementById('nameDropdown').classList.remove('active');
                 }
+                // re-check arrows on resize
+                setTimeout(setupMobileArrows, 100);
             });
         });
 
