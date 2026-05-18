@@ -1319,6 +1319,7 @@
                 category: "campaign",
                 title: "Launch Campaigns", 
                 description: "Integrated marketing campaign with social media visuals, billboards, and print ads, in egyptian style ",
+                year: "2024",
                 media: [
                     { type: "image", src: "Vespatic.png", text: "Vespatic campaign is talking about transportation , to go your home safely." },
                     { type: "image", src: "Nebu Nile.png", text: "Nebu Nile – branding about water." },
@@ -1336,6 +1337,7 @@
                 category: "artistic book", 
                 title: "Khukhu el sagheer w ashgar el bamboo", 
                 description: "Limited edition art book featuring experimental typography and mixed media illustrations.",
+                year: "2024",
                 media: [
                     { type: "image", src: "Artisticbook-0.jpeg", text: "Front book" },
                     { type: "image", src: "Artisticbook-1.jpeg", text: "Back book" },
@@ -1347,6 +1349,7 @@
                 category: "photography", 
                 title: "Egypt places", 
                 description: "Fine art photography series exploring light and shadow in the Egyptian desert.",
+                year: "2024",
                 media: [
                     { type: "image", src: "El sayeda zienab (1).png", text: "El Sayeda Zienab p1" },
                     { type: "image", src: "El sayeda zienab (2).png", text: "El Sayeda Zienab p2" },
@@ -1379,6 +1382,7 @@
                 category: "videos", 
                 title: "Launch videos", 
                 description: "Short experimental film blending live action with motion graphics.",
+                year: "2024",
                 media: [
                     { type: "video", src: "Comp 1 (1).mp4", text: "Collage video is talking about antiquities of each government in Egypt." },
                     { type: "video", src: "Zamalek (1)mp4.mp4", text: "POV: IT'S ZAMALEK" },
@@ -1391,6 +1395,7 @@
                 category: "digital art", 
                 title: "Launch digital art", 
                 description: "Digital illustrations , 2d modeling sheet and concept art ",
+                year: "2024",
                 media: [
                     { type: "image", src: "ADDAM.jpeg", text: "Addam & Morticia." },
                     { type: "image", src: "Untitled-1.png", text: "Addam & Morticia" },
@@ -1415,6 +1420,7 @@
                 category: "storyboard", 
                 title: "Launch storyboard", 
                 description: "Storyboard for a short film .",
+                year: "2024",
                 media: [
                     { type: "image", src: "Establishing shot.png", text: "Establishing shot 5 povs , both of style gothic art and post-impressionisnm 'Van Gogh'" },
                     { type: "image", src: "scriptkhukhuwkhukh.jpeg", text: "Khukhu and khukha" },
@@ -1431,6 +1437,7 @@
                 category: "UI/UX", 
                 title: "web design", 
                 description: "Website design.",
+                year: "2024",
                 media: [
                     { type: "image", src: "Redbull Energy drink.png", text: "Redbull Energy drink." },
                     { type: "image", src: "Redbull sugar free.png", text: "Redbull sugar free." },
@@ -1460,6 +1467,7 @@
                 category: "posters", 
                 title: "Launch posters", 
                 description: "Variety posters.",
+                year: "2024",
                 media: [
                     { type: "image", src: "Artboard (2).jpeg", text: "Collage poster" },
                     { type: "image", src: "perfum.jpeg", text: "Product poster" },
@@ -1482,6 +1490,7 @@
                 category: "cover book", 
                 title: "Antique book cover", 
                 description: "Book cover design for a collection .",
+                year: "2024",
                 media: [
                     { type: "image", src: "ElSultanMosque.jpg", text: "El Sultan Hassan Mosque." },
                     { type: "image", src: "ElRefaiiMosque.jpg", text: "El Refai'i Mosque." },
@@ -1593,7 +1602,7 @@
             itemsArray.forEach((item, idx) => {
                 // Find original index for viewer (needs original index for openWorkViewer)
                 const originalIndex = workItems.findIndex(w => 
-                    w.category === item.category && w.title === item.title && w.year === item.year);
+                    w.category === item.category && w.title === item.title);
                 
                 const card = document.createElement('div');
                 card.className = 'work-card';
@@ -1628,7 +1637,7 @@
                     <h3 class="work-title">${item.title}</h3>
                     <p class="work-description">${item.description}</p>
                     <div class="work-footer">
-                        <span class="work-year">${item.year}</span>
+                        <span class="work-year">${item.year || '2024'}</span>
                         <span class="work-click-hint">
                             explore <i class="fi fi-rr-arrow-right"></i>
                         </span>
@@ -1679,7 +1688,7 @@
             container.innerHTML = `
                 <div class="viewer-header">
                     <h2 class="viewer-title">${work.title}</h2>
-                    <span class="viewer-category">${work.category} · ${work.year}</span>
+                    <span class="viewer-category">${work.category} · ${work.year || '2024'}</span>
                 </div>
                 
                 <div class="viewer-media">
